@@ -1,50 +1,96 @@
-# ⚾ MLB Pitcher Mind: 상황 기반 투구 예측 AI 시스템
+# ⚾ MLB 투구 구종 예측 모델 (Pitch Type Prediction)
 
-![Python](https://img.shields.io/badge/Python-3.8%2B-blue) ![XGBoost](https://img.shields.io/badge/XGBoost-Ensemble-green) ![AutoGluon](https://img.shields.io/badge/AutoML-AutoGluon-orange) ![Statcast](https://img.shields.io/badge/Data-PyBaseball-red)
+> **Ensemble Learning with XGBoost & AutoGluon** \> **Target Player:** Yoshinobu Yamamoto (2025 Season)
 
 ## 📖 프로젝트 개요 (Overview)
-이 프로젝트는 MLB 투수의 투구 패턴을 분석하여, **"특정 경기 상황(볼카운트, 주자, 점수차 등)에서 투수가 어떤 구종을 던질지"** 예측하는 AI 모델입니다.
-단일 모델의 한계를 극복하기 위해 **XGBoost**와 **AutoGluon(AutoML)**을 결합한 **앙상블(Ensemble)** 기법을 적용했으며, 최종적으로 코칭 스태프가 활용할 수 있는 **'상황별 구종 전략 시트(Strategy Sheet)'**를 도출하는 것을 목표로 합니다.
 
-## 💡 핵심 기능 (Key Features)
-* **상황 기반 예측 (Context-Aware Prediction):** 투구 릴리스 포인트나 구속 등 '투구 후' 데이터가 아닌, **투구 전(Pre-pitch)** 알 수 있는 정보(볼카운트, 주자 상황, 이닝 등)만을 사용하여 실전성을 높였습니다.
-* **고성능 앙상블 모델링:** 전통적인 강자 **XGBoost**와 최신 AutoML 프레임워크인 **AutoGluon**의 예측 확률을 가중 평균하여 정확도와 일반화 성능을 극대화했습니다.
-* **자동화된 전략 리포트:** 192가지 경기 상황(볼카운트 × 주자 × 타자 손잡이)에 대한 최적 구종을 분석하여 `csv` 및 `시각화 표`로 자동 생성합니다.
-* **데이터 시각화:** Confusion Matrix, 볼카운트별 히트맵, 타자 유형별 전략 비교표 등을 통해 모델의 판단 근거를 시각적으로 제시합니다.
+이 프로젝트는 **2025년 MLB Statcast 데이터**를 활용하여 투수의 다음 투구 구종을 예측하는 머신러닝 모델을 구축한 연구입니다.
+단일 알고리즘의 한계를 극복하기 위해 **XGBoost**와 **AutoGluon**을 결합한 **앙상블(Ensemble)** 기법을 적용하였으며, 특히 **구종 범주화(Pitch Categorization)** 전략을 통해 데이터 불균형 문제를 해결하고 예측의 실효성을 높이는 데 초점을 맞추었습니다.
+
+이 연구는 단순히 물리적 트래킹 데이터(구속, 회전수 등)에 의존하지 않고, **볼카운트, 주자 상황, 점수 차 등 '경기 맥락(Game Context)' 변수**만으로 투수의 심리와 전술을 예측했다는 점에서 의의가 있습니다.
+
+-----
+
+## 📂 파일 구성 (File Structure)
+
+| 파일명 | 설명 (Description) |
+| :--- | :--- |
+| **`model1.ipynb`** | **[Baseline Model] 세부 구종 예측 모델** <br> - 6가지 세부 구종(FF, FC, SI, SL, FS, CU)을 개별적으로 예측 <br> - 데이터 불균형 및 유사 구종 간 오분류 문제 확인 |
+| **`model2.ipynb`** | **[Proposed Model] 구종 범주화 예측 모델** <br> - 유사 구종을 3개 범주(Fastball, Breaking, Offspeed)로 통합 <br> - 정확도 및 F1-Score 대폭 향상 <br> - 볼카운트/주자/좌우타자별 심층 분석 및 시각화 포함 |
+
+-----
 
 ## 🛠 사용 기술 (Tech Stack)
-* **Data Collection:** `pybaseball` (Statcast API)
-* **Preprocessing:** `Pandas`, `NumPy`
-* **Modeling:** `XGBoost`, `AutoGluon.tabular`, `Scikit-learn`
-* **Visualization:** `Matplotlib`, `Seaborn`
 
-## 📊 분석 프로세스 (Methodology)
-1.  **Data Acquisition:** MLB Statcast 데이터를 실시간으로 수집합니다.
-2.  **Feature Engineering:**
-    * 범주형 변수(타자/투수 손잡이) 인코딩 (L/R → 0/1)
-    * 희귀 구종 제거 및 데이터 밸런싱
-    * 상황 변수(볼카운트, 점수차, 주자 유무) 추출
-3.  **Model Training:**
-    * **Model A:** XGBoost Classifier (Hyperparameter Tuning)
-    * **Model B:** AutoGluon Tabular Predictor (Multi-model Stacking)
-    * **Ensemble:** Soft Voting (Weighted Average)
-4.  **Strategy Generation:** 모든 경우의 수(Batch Prediction)를 입력하여 상황별 최적 전략 도출
+  * **Language:** Python 3.10+
+  * **Data Collection:** `pybaseball` (MLB Statcast)
+  * **ML Libraries:**
+      * `XGBoost` (Gradient Boosting)
+      * `AutoGluon` (AutoML Framework)
+      * `Scikit-learn` (Preprocessing & Evaluation)
+  * **Visualization:** `Matplotlib`, `Seaborn`
 
-## 📈 결과물 예시 (Result)
-*(여기에 코드 실행 후 나온 '전략 시트 이미지'나 '히트맵 이미지'를 캡처해서 넣으세요)*
+-----
 
-### 1. 우타자/좌타자 상대 전략 시트
-투수가 타자의 손잡이와 주자 상황에 따라 구종 배합을 어떻게 가져가는지 분석한 결과입니다.
-*(이미지 삽입)*
+## 📊 연구 방법론 (Methodology)
 
-### 2. 모델 성능 평가
-* **XGBoost + AutoGluon Ensemble Accuracy:** XX.X% (예시)
-* **F1-Score:** 0.XX
+### 1\. 데이터 수집 및 전처리
 
-## 🚀 실행 방법 (How to Run)
+  * **대상:** 야마모토 요시노부 (Yoshinobu Yamamoto, LAD) 2025시즌 투구 데이터
+  * **Feature:** 경기 상황 변수만 사용 (물리 데이터 배제)
+      * `balls`, `strikes`, `outs`, `inning`, `score_diff`
+      * `on_1b`, `on_2b`, `on_3b` (주자 유무)
+      * `stand` (좌/우 타자)
+  * **Split:** Train/Test (8:2), Stratified Split 적용
+
+### 2\. 모델링 전략
+
+  * **앙상블 (Ensemble):** XGBoost (가중치 0.6) + AutoGluon (가중치 0.4) -\> **Weighted Soft Voting**
+  * **범주화 (Categorization):**
+      * **Fastball Group:** 포심(FF), 싱커(SI), 커터(FC)
+      * **Breaking Group:** 슬라이더(SL), 커브(CU), 스위퍼(ST)
+      * **Offspeed Group:** 스플리터(FS), 체인지업(CH)
+
+-----
+
+## 📈 실험 결과 (Results)
+
+### 1\. 성능 비교 (Model 1 vs Model 2)
+
+구종 범주화 전략(Model 2)을 적용했을 때, 세부 구종 모델(Model 1) 대비 **약 47%의 성능 향상**을 달성했습니다.
+
+| 모델 | 타겟 클래스 | Accuracy | Weighted F1-Score | 비고 |
+| :--- | :---: | :---: | :---: | :--- |
+| **Model 1** | 6개 (세부 구종) | 0.36 | 0.33 | 유사 구종 혼동 다수 |
+| **Model 2** | **3개 (범주화)** | **0.53** | **0.48** | **Fastball Recall: 0.78** |
+
+### 2\. 주요 분석 시각화
+
+`model2.ipynb`에서는 다음과 같은 다양한 상황별 투구 패턴 분석을 제공합니다.
+
+  * **Confusion Matrix:** 모델의 오분류 패턴 분석
+  * **Ball Count Heatmap:** 볼카운트별(유리/불리) 투구 성향 분석
+  * **Platoon Split:** 좌타자 vs 우타자 상대 전략 비교
+  * **Clutch Situation:** 득점권/만루 위기 시 투구 변화 분석
+  * **Strategy Sheet:** 현장에서 활용 가능한 타자별 공략 가이드 시각화
+
+-----
+
+## 🚀 설치 및 실행 (Installation)
+
 ```bash
-# 1. 필수 라이브러리 설치
-pip install pybaseball autogluon.tabular scikit-learn xgboost matplotlib seaborn
+# 필수 라이브러리 설치
+pip install pybaseball xgboost autogluon scikit-learn pandas matplotlib seaborn
+```
 
-# 2. 코드 실행
-python pitch_prediction.py
+1.  저장소를 클론합니다.
+2.  `model2.ipynb`를 실행합니다.
+3.  분석할 연도(2025)와 투수 이름(Yamamoto)을 입력하면 데이터 수집부터 분석까지 자동으로 수행됩니다.
+
+-----
+
+## 📝 결론 (Conclusion)
+
+본 연구는 복잡한 트래킹 장비 없이 **경기 상황 데이터**만으로도 투수의 전략적 흐름을 읽어낼 수 있음을 입증했습니다. 특히 **구종 범주화**는 모델의 예측 신뢰도를 높여, 타자의 타이밍 싸움과 전력 분석팀의 전략 수립에 실질적인 도움을 줄 수 있는 방법론입니다.
+
+-----

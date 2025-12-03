@@ -76,19 +76,6 @@
 
 -----
 
-## 🚀 설치 및 실행 (Installation)
-
-```bash
-# 필수 라이브러리 설치
-pip install pybaseball xgboost autogluon scikit-learn pandas matplotlib seaborn
-```
-
-1.  저장소를 클론합니다.
-2.  `model2.ipynb`를 실행합니다.
-3.  분석할 연도(2025)와 투수 이름(Yamamoto)을 입력하면 데이터 수집부터 분석까지 자동으로 수행됩니다.
-
------
-
 ## 📝 결론 (Conclusion)
 
 본 연구는 복잡한 트래킹 장비 없이 **경기 상황 데이터**만으로도 투수의 전략적 흐름을 읽어낼 수 있음을 입증했습니다. 특히 **구종 범주화**는 모델의 예측 신뢰도를 높여, 타자의 타이밍 싸움과 전력 분석팀의 전략 수립에 실질적인 도움을 줄 수 있는 방법론입니다.
